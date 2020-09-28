@@ -1,7 +1,11 @@
-class tooline:
-    def __init__(self):
-        print('waow')
+from pyglet import graphics
+from phys import physObject
 
+class tooline(physObject):
+    def __init__(self):
+        super().__init__()
+        
+        self.batch.add()
 class opilane:
     def __init__(self):
         print('waow')
