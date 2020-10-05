@@ -8,17 +8,17 @@ class Player:
     def __init__(self, pos=(0,0,0), rot=(0,0)):
         self.pos = list(pos)
         self.rot = list(rot)
-        self.y_max = pos[1]
+        self.y_max = 50
 
-    def edge_smoothing(self, axis, key, params, tilt, tilt_b):
-        tilt_v = -math.exp(-0.07*getattr(self,tilt))+1
+    def edge_smoothing(self, axis, scale, key, params, tilt, tilt_b):
+        tilt_v = (-math.exp(-0.07*getattr(self,tilt))+1)*scale
         if getattr(self,tilt) <= 60 and key != None:
             setattr(self, tilt, getattr(self,tilt)+1)
         print(getattr(self,tilt))
         if (key == 'a' or key == 'w') and self.pos[axis]<params[0]: self.pos[axis] = params[0]-tilt_v
         elif (key == 'd' or key == 's') and self.pos[axis]>params[1]: self.pos[axis] = params[1]+tilt_v
         else:
-            tilt_vb = math.exp(-0.07*getattr(self,tilt_b))
+            tilt_vb = math.exp(-0.07*getattr(self,tilt_b))*scale
             if self.pos[axis]<=params[0]: self.pos[axis] += tilt_vb
             else: self.pos[axis] -= tilt_vb
             setattr(self,tilt,getattr(self,tilt)-1)
@@ -43,32 +43,33 @@ class Player:
         #             self.tilt_b += 1
 
  
-    def camBounds(self, params, dt=0, keys=None, dx=0, dy=0):
+    def camBounds(self, params, scale, dt=0, keys=None, dx=0, dy=0):
         # ---fun fact #001---
         # liites 0.1 ei pruugi alda vastuseks saada oodatud tulemuse, sest arv 0.1 on hoitud arvutis kui
         # 1000000000000000055511151231257827021181583404541015625 ning vahepeal võib "ebatäpsus" jääda arvutusse sisse e.g 0.1 + 0.2 = 0.30000000000000004
         # ja kehtib võrdus 0.1 + 0.2 != 0.3 . See ei ole otseselt bug, vaid laialt kasutuse olevate floating point standard (Double Presicion Number (binary64)),
         # mille täpsus on 52 biti. Niimoodi toimivad ka teised programmeerimiskeeled.
-        # --- fun fact #001 acquiered---
+        # --- fun fact acquiered---
         
-        # kaamer üles alla liigutamise piirid ja kallutamine kõrguse muutusega
-        if self.pos[1] >= 1.2 and self.pos[1] <= self.y_max:
-            self.rot[0] -= dy
-        elif self.pos[1] <= 1.2:
-            self.pos[1] = 1.2
+        # kaamera üles alla liigutamise piirid ja kallutamine kõrguse muutusega
+        params = (params[0]*scale, params[1]*scale)
+        if self.pos[1] >= 1.2*scale and self.pos[1] <= self.y_max:
+            self.rot[0] -= dy/scale
+        elif self.pos[1] <= 1.2*scale:
+            self.pos[1] = 1.2*scale
         # Seab mapi äärele piiri, kuid laseb exponentsiaalsel kirusel minna kuni (-e^60)+1 ja samamoodi tuleb tagasi kui nuppu peal ei hoia
         edge = False
         if keys != None:
             if self.pos[0]<=params[0] or self.pos[0]>=params[1]:
                 edge = True
-                if keys[pl.window.key.A]: self.edge_smoothing(0,'a',params,'tilt','tilt_b')
-                elif keys[pl.window.key.D]: self.edge_smoothing(0,'d',params,'tilt','tilt_b')
-                else: self.edge_smoothing(0,None,params,'tilt','tilt_b')
+                if keys[pl.window.key.A]: self.edge_smoothing(0, scale, 'a', params,'tilt','tilt_b')
+                elif keys[pl.window.key.D]: self.edge_smoothing(0, scale, 'd', params,'tilt','tilt_b')
+                else: self.edge_smoothing(0, scale, None, params,'tilt','tilt_b')
             if self.pos[2]<=params[0] or self.pos[2]>=params[1]:
                 edge = True
-                if keys[pl.window.key.W]: self.edge_smoothing(2,'w',params,'ztilt','ztilt_b')
-                elif keys[pl.window.key.S]: self.edge_smoothing(2,'s',params,'ztilt','ztilt_b')
-                else: self.edge_smoothing(2,None,params,'ztilt','ztilt_b')
+                if keys[pl.window.key.W]: self.edge_smoothing(2, scale, 'w', params,'ztilt','ztilt_b')
+                elif keys[pl.window.key.S]: self.edge_smoothing(2, scale,'s', params,'ztilt','ztilt_b')
+                else: self.edge_smoothing(2, scale, None, params,'ztilt','ztilt_b')
 
         if not edge:
             self.tilt = 1
@@ -87,14 +88,14 @@ class Player:
             rotX = self.rot[0]/180*math.pi
             dx, dy, dz = math.sin(rotY)*0.1, rotX*0.1, math.cos(rotY)*0.1
             self.pos[0] +=dx; self.pos[1] += dy; self.pos[2] -=dz
-        self.camBounds(params)
+        #self.camBounds(params)
 
     
-    def update(self, dt, keys, params):
+    def update(self, dt, keys, params, scale):
         # nuppudega liikumise kalkuleerimine
         rotY = -self.rot[1]/180*math.pi # glRotatef võtab radiaane
         rotX = self.rot[0]/180*math.pi
-        dx, dy, dz = math.sin(rotY)*0.1, rotX*0.1, math.cos(rotY)*0.1
+        dx, dy, dz = math.sin(rotY)*0.1*scale, rotX*0.1*scale, math.cos(rotY)*0.1*scale
         # kaamera liigutamine kaasarvatud kaamera nurk
         if keys[pl.window.key.W]: self.pos[0] +=dx; self.pos[2] -=dz # self.pos[1] += dy
         if keys[pl.window.key.S]: self.pos[0] -=dx; self.pos[2] +=dz # self.pos[1] -= dy
@@ -103,11 +104,11 @@ class Player:
 
         # kaamera yles alla
         dy = 0
-        s = dt*10
+        s = dt*10*scale
         if keys[pl.window.key.LCTRL]: self.pos[1] -= s; dy = -s
         if keys[pl.window.key.LSHIFT]: self.pos[1] += s; dy = s
 
-        self.camBounds(params, dy=dy*10, keys=keys)
+        self.camBounds(params, scale, dy=dy*10, keys=keys)
 
 class simwin(pl.window.Window):
     ''' akna kontrollimine ning kõik muu graafika konstrueerimine sellesse '''
@@ -120,17 +121,21 @@ class simwin(pl.window.Window):
         pl.gl.glClearColor(123/255,221/255,240/255,1) #background color
         pl.gl.glEnable(pl.gl.GL_DEPTH_TEST)
         #pl.gl.glEnable(pl.gl.GL_CULL_FACE)
-        
+        self.scale = 10
         self.keys = pl.window.key.KeyStateHandler()
         self.mouse = pl.window.mouse.MouseStateHandler()
         self.push_handlers(self.keys, self.mouse)
-        pl.clock.schedule(self.update)
-        self.player = Player((0.5,max(city.shape),-0.5),(-90,0))
-        self.buildings = []
-        for y in range(self.gridParams[0], self.gridParams[1], 2):
-            for x in range(self.gridParams[0]+1, self.gridParams[1], 2):
-                self.buildings.append(b.kodu(x, 0, y))
-                self.buildings.append(b.kodu(-x, 0, y))
+        pl.clock.schedule_interval(self.update, 1/120)
+        self.player = Player((0.5*self.scale,max(city.shape)*self.scale,-0.5*self.scale),(-90,0))
+        self.objects = {'buildings': None, 'tee': None}
+        for y in range(self.gridParams[0], self.gridParams[1]):
+            for x in range(self.gridParams[0]+1, self.gridParams[1]):
+                if y % 2 == 0 and x % 2 != 0:
+                    build = b.kodu(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
+                else:
+                    build = b.tee(x*self.scale, 0, y*self.scale, self.scale); key = 'tee'
+                if self.objects[key] == None:
+                    self.objects[key] = build
 
 
     def push(self, pos, rot):
@@ -171,17 +176,26 @@ class simwin(pl.window.Window):
         elif KEY == pl.window.key.SPACE: self.mouse_lock = not self.mouse_lock
     
     def update(self, dt):
-        self.player.update(dt, self.keys, self.gridParams)
+        self.player.update(dt, self.keys, self.gridParams, self.scale)
         if self.mouse_lock: self.player.mouse_motion(0, 0, self.mouse, self.gridParams)
 
     def on_draw(self):
-        window.clear()
+        # --- fun fact #002 ---
+        # Koodiga
+        # for b in self.buildings:
+        #     b.draw()
+        # "joonistab" OpenGL iga kuubiku eraldi ning juba 100x100 ruudustikus on umbes 0.5 fps'i, pannes aga kõik kuubikud ühe batch'i sisse ehk
+        # self.buildings.draw() on samas 100x100 ruudustikus fps umbes 800  #VoteForBatchedRendering,
+        # ilmselt tuleneb see sellest, et batched rendering oskab kasutada gpu'd paremini 
+        # --- fun fact acquiered ---
+
+        self.clear()
+        #pl.gl.glClear(pl.gl.GL_COLOR_BUFFER_BIT | pl.gl.GL_DEPTH_BUFFER_BIT)
         self.fps.draw()
         
         self.set3d()
         self.push(self.player.pos, self.player.rot)
-        for b in self.buildings:
-            b.draw()
+        for key in self.objects: self.objects[key].draw()
         pl.gl.glPopMatrix()
         # pl.graphics.draw_indexed(4, pl.gl.GL_TRIANGLES,
         # [1,1,1,1,1,1],
@@ -200,6 +214,6 @@ class simwin(pl.window.Window):
         
 #pl.clock.schedule_interval(lambda fps_lock : fps_lock, 1/60.0)# retardus infinitus, uuendab window iga tick, ilma selleta ainult resize event puhul
 
-city = np.ones((5,5))
+city = np.ones((10,10))
 window = simwin(city, resizable=True, width=1280, height=720)
 pl.app.run()

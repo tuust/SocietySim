@@ -1,7 +1,7 @@
 from pyglet import graphics
 from phys import physObject
 
-class tooline(physObject):
+class tooline:
     def __init__(self):
         super().__init__()
         

@@ -5,7 +5,7 @@ from pyglet import resource
 from pyglet import image
 from os import listdir
 
-class kodu(physObject):
+class kodu:
     path = 'res/kodu/'
     files = listdir(path)
     textures = []
@@ -13,7 +13,12 @@ class kodu(physObject):
         tex = image.load(str(path+f)).get_texture()
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST)
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST)
+        # glFramebufferParameterf(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 512)
+        # glFramebufferParameterf(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 512)
+        # glFramebufferParameterf(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_SAMPLES, 4)
         textures.append((graphics.TextureGroup(tex), tex.tex_coords))
+
+    batch = graphics.Batch()
     #textures = [ for f in files if not ) if not ] 
 
     # def load_tex(self, file):
@@ -25,10 +30,8 @@ class kodu(physObject):
     #     glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST)
     #     self.tex_coords = tex.tex_coords
     #     return graphics.TextureGroup(tex)
-    def __init__(self, x, y, z):
-        super().__init__()
-        self.batch = graphics.Batch()
-        X,Y,Z = x+1,y+1,z+1
+    def __init__(self, x, y, z, size=1):
+        X,Y,Z = x+size,y+size,z+size
         #tex_coords = ('t2f', (0,0, 0.796875,0, 0.796875,0.796875, 0,0.796875))
         #tex = self.load_tex('res/kodu/wall1.jpg')
         color = ('c3f', (1,1,1)*4)
@@ -46,13 +49,17 @@ class tee:
     textures = []
     for f in files:
         tex = image.load(str(path+f)).get_texture()
-        glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST)
-        glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST)
+        # glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST)
+        # glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST)
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE )
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
         textures.append((graphics.TextureGroup(tex), tex.tex_coords))
-    def __init__(self, x, y, z):
-        super().__init__()
-        self.batch = graphics.Batch()
-        X,Y,Z = x+1,y+1,z+1
+    batch = graphics.Batch()
+    def __init__(self, x, y, z, size=1):
+        X,Y,Z = x+size,y+size,z+size
+        color = ('c3f', (1,1,1)*4)
         self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3f', (x, y, z,  X, y, z,  X, y, Z,  x, y, Z)), color, ('t3f',self.textures[0][1])) # bottom
     def draw(self):
         self.batch.draw()
