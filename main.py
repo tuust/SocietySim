@@ -6,7 +6,7 @@ import pyglet as pl
 #import graphics as gui
 import math
 from random import randint
-print("Proovi test2")
+print("Proovi test")
 
 #inimene = int(input("sisestage inimeste arv:"))
 #haige = int(input("sisestage haigete arv:"))
