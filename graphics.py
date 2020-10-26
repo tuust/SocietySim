@@ -3,8 +3,9 @@ import person as p
 import building as b
 import math
 import numpy as np
+# import ratcave as rc  # shaderitega blenderi objektid
 
-class Player:
+class Player():
     def __init__(self, pos=(0,0,0), rot=(0,0)):
         self.pos = list(pos)
         self.rot = list(rot)
@@ -14,7 +15,6 @@ class Player:
         tilt_v = (-math.exp(-0.07*getattr(self,tilt))+1)*scale
         if getattr(self,tilt) <= 60 and key != None:
             setattr(self, tilt, getattr(self,tilt)+1)
-        print(getattr(self,tilt))
         if (key == 'a' or key == 'w') and self.pos[axis]<params[0]: self.pos[axis] = params[0]-tilt_v
         elif (key == 'd' or key == 's') and self.pos[axis]>params[1]: self.pos[axis] = params[1]+tilt_v
         else:
@@ -26,21 +26,6 @@ class Player:
             return
         if getattr(self,tilt_b) < 60:
             setattr(self,tilt_b,getattr(self,tilt_b)+1)
-        # self.tilt_v = -math.exp(-0.07*self.tilt)+1
-        #         if self.tilt <= 60 and (keys[pl.window.key.A] or keys[pl.window.key.D]):
-                    
-        #             self.tilt += 1
-        #         if keys[pl.window.key.A] and self.pos[0]<=params[0]: self.pos[0] = params[0]-self.tilt_v
-        #         elif keys[pl.window.key.D] and self.pos[0]>=params[0]: self.pos[0] = params[1]+self.tilt_v
-        #         else:
-        #             tilt_vb = math.exp(-0.07*self.tilt_b)
-        #             if self.pos[0]<=params[0]: self.pos[0] += tilt_vb
-        #             else: self.pos[0] -= tilt_vb
-        #             self.tilt -= 1
-        #             self.tilt_b -= 1
-        #             return
-        #         if self.tilt_b < 60:
-        #             self.tilt_b += 1
 
  
     def camBounds(self, params, scale, dt=0, keys=None, dx=0, dy=0):
@@ -49,7 +34,7 @@ class Player:
         # 1000000000000000055511151231257827021181583404541015625 ning vahepeal võib "ebatäpsus" jääda arvutusse sisse e.g 0.1 + 0.2 = 0.30000000000000004
         # ja kehtib võrdus 0.1 + 0.2 != 0.3 . See ei ole otseselt bug, vaid laialt kasutuse olevate floating point standard (Double Presicion Number (binary64)),
         # mille täpsus on 52 biti. Niimoodi toimivad ka teised programmeerimiskeeled.
-        # --- fun fact acquiered---
+        # --- fun fact acquiered ---
         
         # kaamera üles alla liigutamise piirid ja kallutamine kõrguse muutusega
         params = (params[0]*scale, params[1]*scale)
@@ -88,9 +73,7 @@ class Player:
             rotX = self.rot[0]/180*math.pi
             dx, dy, dz = math.sin(rotY)*0.1, rotX*0.1, math.cos(rotY)*0.1
             self.pos[0] +=dx; self.pos[1] += dy; self.pos[2] -=dz
-        #self.camBounds(params)
 
-    
     def update(self, dt, keys, params, scale):
         # nuppudega liikumise kalkuleerimine
         rotY = -self.rot[1]/180*math.pi # glRotatef võtab radiaane
@@ -107,7 +90,9 @@ class Player:
         s = dt*10*scale
         if keys[pl.window.key.LCTRL]: self.pos[1] -= s; dy = -s
         if keys[pl.window.key.LSHIFT]: self.pos[1] += s; dy = s
-
+        # print(scene.camera.position.xyz)
+        # scene.camera.position.xyz = self.pos[0]*0.01,self.pos[1]*0.01,self.pos[2]*0.01
+        # scene.camera.rotation.xyz = self.rot[0],self.rot[1],0
         self.camBounds(params, scale, dy=dy*10, keys=keys)
 
 class simwin(pl.window.Window):
@@ -121,22 +106,27 @@ class simwin(pl.window.Window):
         pl.gl.glClearColor(123/255,221/255,240/255,1) #background color
         pl.gl.glEnable(pl.gl.GL_DEPTH_TEST)
         #pl.gl.glEnable(pl.gl.GL_CULL_FACE)
+        self.fov = 90
         self.scale = 10
         self.keys = pl.window.key.KeyStateHandler()
         self.mouse = pl.window.mouse.MouseStateHandler()
         self.push_handlers(self.keys, self.mouse)
         pl.clock.schedule_interval(self.update, 1/120)
         self.player = Player((0.5*self.scale,max(city.shape)*self.scale,-0.5*self.scale),(-90,0))
-        self.objects = {'buildings': None, 'tee': None}
+        self.objects = {'buildings': None, 'tee': None, 'tool': []}
+        inimesed = [p.tooline() for x in range(200)]
         for y in range(self.gridParams[0], self.gridParams[1]):
             for x in range(self.gridParams[0]+1, self.gridParams[1]):
                 if y % 2 == 0 and x % 2 != 0:
                     build = b.kodu(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
                 else:
                     build = b.tee(x*self.scale, 0, y*self.scale, self.scale); key = 'tee'
-                if self.objects[key] == None:
-                    self.objects[key] = build
-
+                if self.objects[key] == None: self.objects[key] = build
+        for inimene in inimesed:
+            # if None in self.objects.values():
+            if isinstance(inimene, p.tooline):
+                self.objects['tool'].append(inimene)
+            else: break
 
     def push(self, pos, rot):
         pl.gl.glPushMatrix()
@@ -155,7 +145,7 @@ class simwin(pl.window.Window):
 
     def set3d(self):
         self.Projection()
-        pl.gl.gluPerspective(100,self.width/self.height,0.05,1000) # FOV, aspect ratio, min render distance, max render dist
+        pl.gl.gluPerspective(self.fov,self.width/self.height,0.05,1000) # FOV, aspect ratio, min render distance, max render dist
         self.Model()
 
     def set2d(self):
@@ -174,7 +164,7 @@ class simwin(pl.window.Window):
     def on_key_press(self, KEY, MOD):
         if KEY == pl.window.key.ESCAPE: self.close()
         elif KEY == pl.window.key.SPACE: self.mouse_lock = not self.mouse_lock
-    
+
     def update(self, dt):
         self.player.update(dt, self.keys, self.gridParams, self.scale)
         if self.mouse_lock: self.player.mouse_motion(0, 0, self.mouse, self.gridParams)
@@ -190,30 +180,18 @@ class simwin(pl.window.Window):
         # --- fun fact acquiered ---
 
         self.clear()
-        #pl.gl.glClear(pl.gl.GL_COLOR_BUFFER_BIT | pl.gl.GL_DEPTH_BUFFER_BIT)
-        self.fps.draw()
-        
         self.set3d()
         self.push(self.player.pos, self.player.rot)
-        for key in self.objects: self.objects[key].draw()
+        for key in self.objects:
+            if isinstance(self.objects[key], list):
+                for obj in self.objects[key]:
+                    obj.draw()
+            else: self.objects[key].draw()
         pl.gl.glPopMatrix()
-        # pl.graphics.draw_indexed(4, pl.gl.GL_TRIANGLES,
-        # [1,1,1,1,1,1],
-        # ('v2i', (100, 150,
-        #         200, 250,
-        #         300, 350,
-                # 400, 450)))
-
-        # pl.gl.glBegin(pl.gl.GL_QUADS)
-        # pl.gl.glVertex2f(100., 100.)
-        # pl.gl.glVertex2f(150., 150.)
-        # pl.gl.glVertex2f(200.,100.)
-        # pl.gl.glVertex2f(150.,50.)
-        # pl.gl.glEnd()
-        # pl.shapes.Arc(self.get_size()[0]-100,self.get_size()[1]*0.8,20,segments=50).draw()
         
-#pl.clock.schedule_interval(lambda fps_lock : fps_lock, 1/60.0)# retardus infinitus, uuendab window iga tick, ilma selleta ainult resize event puhul
+        self.fps.draw()
 
-city = np.ones((10,10))
+city = np.ones((5,5))
+
 window = simwin(city, resizable=True, width=1280, height=720)
 pl.app.run()
