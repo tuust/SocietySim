@@ -1,13 +1,8 @@
-import person as p
 import building as b
-import virus as v
+import person as p
 import numpy as np
-import pyglet as pl
-#import graphics as gui
 import math
 from random import randint
-print("Proovi test")
-
 #inimene = int(input("sisestage inimeste arv:"))
 #haige = int(input("sisestage haigete arv:"))
 #surnud = int(input("sisestage suremisprotsent:"))
@@ -16,27 +11,36 @@ print("Proovi test")
 #terved = inimene - haige
 #lo = [ka, l3, l2]
 #print(terved)
-##haige = (haige * 2)  
-majad = []
+##haige = (haige * 2)
 maju = 100
-for x in range(int(math.sqrt(maju))):
-    majad.append([])
-koole = maju * 0.02
-haiglad = maju * 0.01
-haiglad = int(haiglad)
-koole = int(koole)
-for maja in range(maju - haiglad - koole):
-    i = randint(0,int(math.sqrt(maju)) - 1)
-    
-    majad[i].append(b.kodu)
-    
+majad = np.array([])
+
+koole = int(maju * 0.02)
+majad = np.append(majad, np.full((1,koole), b.kool()))
+
+haiglad = int(maju * 0.01)
+majad = np.append(majad, np.full((1,haiglad), b.haigla()))
+
+kodu = maju - haiglad - koole
+majad = np.append(majad, np.full((1,kodu), b.kodu()))
+
+# ja teiste majadega ka
+
+
+# teeb majad mitmedimensiooniliseks ja ajab majad segamini
+np.random.shuffle(majad)
+majad = np.reshape(majad, (int(math.sqrt(maju)),int(math.sqrt(maju))))
+
 #print(majad)
-inimesed = []
-for haiglaid in range(haiglad):
-    h = haiglad
-    majad[h].append(b.haigla)
-print(majad)
+#inimesed
 
+inimesed = {'vanur':[],}
+for rida in range(len(majad)):
+    for maja in range(len(majad[rida])):
+        if isinstance(majad[rida, maja], b.kodu):
+            print('kodu')
+            inimene = p.vanur()
+            inimene.kodu = [rida, maja]#koordinaadid
+            inimene.asukoht = [rida, maja]
+            inimesed['vanur'].append(inimene)
 
-while True:
-    break
