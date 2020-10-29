@@ -35,12 +35,24 @@ majad = np.reshape(majad, (int(math.sqrt(maju)),int(math.sqrt(maju))))
 #inimesed
 
 inimesed = {'vanur':[],}
+inimesed = {'tooline':[],}
+inimesed = {'tootu':[],}
+inimesed = {'opilane':[],}
 for rida in range(len(majad)):
     for maja in range(len(majad[rida])):
         if isinstance(majad[rida, maja], b.kodu):
             print('kodu')
+            range(len(majad))
             inimene = p.vanur()
             inimene.kodu = [rida, maja]#koordinaadid
             inimene.asukoht = [rida, maja]
             inimesed['vanur'].append(inimene)
+            inimene = p.tootu()
+            inimesed['tootu'].append(inimene)
+            inimene = p.tooline()
+            inimesed['tooline'].append(inimene)
+            inimene = p.opilane()
+            inimesed['opilane'].append(inimene)
+
+
 
