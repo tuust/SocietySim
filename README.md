@@ -4,7 +4,7 @@ Georg Karu ja Margus Burk
 ## Installation
 3D keskkond vajab OpenGL'i mingit versiooni, 4.6.0 töötab kindlasti.\
 Vist töötab moodulite kättesaamiseks :)
-```pip install requirements.py```
+```pip install -r requirements.txt```
 ## Tööjaotus
 **Georg Karu** - Tegeleb graafilise poolega. Kood asub graphs branchis.\
 graphics.py peab praegu käivitama. WASD liigutab kaamerat, SHIFT liigutab üles, CTRL liigutab alla. Teoorias töötab ka hiirega ringi vaatamine vajutades SPACE ning kunagi töötas ka vabalt ringi lendamine, kuid seda on nüüdseks piiratud.\
