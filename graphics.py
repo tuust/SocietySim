@@ -114,7 +114,7 @@ class simwin(pl.window.Window):
         pl.clock.schedule_interval(self.update, 1/120)
         self.player = Player((0.5*self.scale,max(city.shape)*self.scale,-0.5*self.scale),(-90,0))
         self.objects = {'buildings': None, 'tee': None, 'tool': []}
-        inimesed = [p.tooline() for x in range(200)]
+        inimesed = [p.tooline() for x in range(50)]
         for y in range(self.gridParams[0], self.gridParams[1]):
             for x in range(self.gridParams[0]+1, self.gridParams[1]):
                 if y % 2 == 0 and x % 2 != 0:
@@ -185,7 +185,7 @@ class simwin(pl.window.Window):
         for key in self.objects:
             if isinstance(self.objects[key], list):
                 for obj in self.objects[key]:
-                    obj.draw()
+                    obj.draw(self.scale)
             else: self.objects[key].draw()
         pl.gl.glPopMatrix()
         
