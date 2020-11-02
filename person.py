@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-from pyglet import graphics
-from phys import physObject
-
-class tooline(physObject):
-    def __init__(self):
-        super().__init__()
-        
-        self.batch.add()
-=======
 from pyglet import graphics, image
 from pyglet.shapes import Rectangle
 from pyglet.gl import *
@@ -89,7 +79,6 @@ class tooline:
     def asukoht(self, coords):
         self.coords = (self.asukoht[0]-5, self.asukoht[1]+5)
 
->>>>>>> karu-gui
 class opilane:
     def __init__(self):
         print('waow')

@@ -3,24 +3,6 @@ import person as p
 import building as b
 import math
 import numpy as np
-<<<<<<< HEAD
-
-class Player:
-    def __init__(self, pos=(0,0,0), rot=(0,0)):
-        self.pos = list(pos)
-        self.rot = list(rot)
-        self.y_max = pos[1]
-
-    def edge_smoothing(self, axis, key, params, tilt, tilt_b):
-        tilt_v = -math.exp(-0.07*getattr(self,tilt))+1
-        if getattr(self,tilt) <= 60 and key != None:
-            setattr(self, tilt, getattr(self,tilt)+1)
-        print(getattr(self,tilt))
-        if (key == 'a' or key == 'w') and self.pos[axis]<params[0]: self.pos[axis] = params[0]-tilt_v
-        elif (key == 'd' or key == 's') and self.pos[axis]>params[1]: self.pos[axis] = params[1]+tilt_v
-        else:
-            tilt_vb = math.exp(-0.07*getattr(self,tilt_b))
-=======
 # import ratcave as rc  # shaderitega blenderi objektid
 
 class Player():
@@ -37,7 +19,6 @@ class Player():
         elif (key == 'd' or key == 's') and self.pos[axis]>params[1]: self.pos[axis] = params[1]+tilt_v
         else:
             tilt_vb = math.exp(-0.07*getattr(self,tilt_b))*scale
->>>>>>> karu-gui
             if self.pos[axis]<=params[0]: self.pos[axis] += tilt_vb
             else: self.pos[axis] -= tilt_vb
             setattr(self,tilt,getattr(self,tilt)-1)
@@ -45,46 +26,14 @@ class Player():
             return
         if getattr(self,tilt_b) < 60:
             setattr(self,tilt_b,getattr(self,tilt_b)+1)
-<<<<<<< HEAD
-        # self.tilt_v = -math.exp(-0.07*self.tilt)+1
-        #         if self.tilt <= 60 and (keys[pl.window.key.A] or keys[pl.window.key.D]):
-                    
-        #             self.tilt += 1
-        #         if keys[pl.window.key.A] and self.pos[0]<=params[0]: self.pos[0] = params[0]-self.tilt_v
-        #         elif keys[pl.window.key.D] and self.pos[0]>=params[0]: self.pos[0] = params[1]+self.tilt_v
-        #         else:
-        #             tilt_vb = math.exp(-0.07*self.tilt_b)
-        #             if self.pos[0]<=params[0]: self.pos[0] += tilt_vb
-        #             else: self.pos[0] -= tilt_vb
-        #             self.tilt -= 1
-        #             self.tilt_b -= 1
-        #             return
-        #         if self.tilt_b < 60:
-        #             self.tilt_b += 1
-
- 
-    def camBounds(self, params, dt=0, keys=None, dx=0, dy=0):
-=======
 
  
     def camBounds(self, params, scale, dt=0, keys=None, dx=0, dy=0):
->>>>>>> karu-gui
         # ---fun fact #001---
         # liites 0.1 ei pruugi alda vastuseks saada oodatud tulemuse, sest arv 0.1 on hoitud arvutis kui
         # 1000000000000000055511151231257827021181583404541015625 ning vahepeal võib "ebatäpsus" jääda arvutusse sisse e.g 0.1 + 0.2 = 0.30000000000000004
         # ja kehtib võrdus 0.1 + 0.2 != 0.3 . See ei ole otseselt bug, vaid laialt kasutuse olevate floating point standard (Double Presicion Number (binary64)),
         # mille täpsus on 52 biti. Niimoodi toimivad ka teised programmeerimiskeeled.
-<<<<<<< HEAD
-        # --- fun fact #001 acquiered---
-        
-        # kaamer üles alla liigutamise piirid ja kallutamine kõrguse muutusega
-        if self.pos[1] >= 1.2 and self.pos[1] <= self.y_max:
-            self.rot[0] -= dy
-        elif self.pos[1] <= 1.2:
-            self.pos[1] = 1.2
-        # Seab mapi äärele piiri, kuid laseb exponentsiaalsel kirusel minna kuni (-e^60)+1 ja samamoodi tuleb tagasi kui nuppu peal ei hoia
-                # print(self.tilt, self.tilt_b)
-=======
         # --- fun fact acquiered ---
         
         # kaamera üles alla liigutamise piirid ja kallutamine kõrguse muutusega
@@ -94,21 +43,10 @@ class Player():
         elif self.pos[1] <= 1.2*scale:
             self.pos[1] = 1.2*scale
         # Seab mapi äärele piiri, kuid laseb exponentsiaalsel kirusel minna kuni (-e^60)+1 ja samamoodi tuleb tagasi kui nuppu peal ei hoia
->>>>>>> karu-gui
         edge = False
         if keys != None:
             if self.pos[0]<=params[0] or self.pos[0]>=params[1]:
                 edge = True
-<<<<<<< HEAD
-                if keys[pl.window.key.A]: self.edge_smoothing(0,'a',params,'tilt','tilt_b')
-                elif keys[pl.window.key.D]: self.edge_smoothing(0,'d',params,'tilt','tilt_b')
-                else: self.edge_smoothing(0,None,params,'tilt','tilt_b')
-            if self.pos[2]<=params[0] or self.pos[2]>=params[1]:
-                edge = True
-                if keys[pl.window.key.W]: self.edge_smoothing(2,'w',params,'ztilt','ztilt_b')
-                elif keys[pl.window.key.S]: self.edge_smoothing(2,'s',params,'ztilt','ztilt_b')
-                else: self.edge_smoothing(2,None,params,'ztilt','ztilt_b')
-=======
                 if keys[pl.window.key.A]: self.edge_smoothing(0, scale, 'a', params,'tilt','tilt_b')
                 elif keys[pl.window.key.D]: self.edge_smoothing(0, scale, 'd', params,'tilt','tilt_b')
                 else: self.edge_smoothing(0, scale, None, params,'tilt','tilt_b')
@@ -117,7 +55,6 @@ class Player():
                 if keys[pl.window.key.W]: self.edge_smoothing(2, scale, 'w', params,'ztilt','ztilt_b')
                 elif keys[pl.window.key.S]: self.edge_smoothing(2, scale,'s', params,'ztilt','ztilt_b')
                 else: self.edge_smoothing(2, scale, None, params,'ztilt','ztilt_b')
->>>>>>> karu-gui
 
         if not edge:
             self.tilt = 1
@@ -136,23 +73,12 @@ class Player():
             rotX = self.rot[0]/180*math.pi
             dx, dy, dz = math.sin(rotY)*0.1, rotX*0.1, math.cos(rotY)*0.1
             self.pos[0] +=dx; self.pos[1] += dy; self.pos[2] -=dz
-<<<<<<< HEAD
-        self.camBounds(params)
-
-    
-    def update(self, dt, keys, params):
-        # nuppudega liikumise kalkuleerimine
-        rotY = -self.rot[1]/180*math.pi # glRotatef võtab radiaane
-        rotX = self.rot[0]/180*math.pi
-        dx, dy, dz = math.sin(rotY)*0.1, rotX*0.1, math.cos(rotY)*0.1
-=======
 
     def update(self, dt, keys, params, scale):
         # nuppudega liikumise kalkuleerimine
         rotY = -self.rot[1]/180*math.pi # glRotatef võtab radiaane
         rotX = self.rot[0]/180*math.pi
         dx, dy, dz = math.sin(rotY)*0.1*scale, rotX*0.1*scale, math.cos(rotY)*0.1*scale
->>>>>>> karu-gui
         # kaamera liigutamine kaasarvatud kaamera nurk
         if keys[pl.window.key.W]: self.pos[0] +=dx; self.pos[2] -=dz # self.pos[1] += dy
         if keys[pl.window.key.S]: self.pos[0] -=dx; self.pos[2] +=dz # self.pos[1] -= dy
@@ -161,13 +87,6 @@ class Player():
 
         # kaamera yles alla
         dy = 0
-<<<<<<< HEAD
-        s = dt*10
-        if keys[pl.window.key.LCTRL]: self.pos[1] -= s; dy = -s
-        if keys[pl.window.key.LSHIFT]: self.pos[1] += s; dy = s
-
-        self.camBounds(params, dy=dy*10, keys=keys)
-=======
         s = dt*10*scale
         if keys[pl.window.key.LCTRL]: self.pos[1] -= s; dy = -s
         if keys[pl.window.key.LSHIFT]: self.pos[1] += s; dy = s
@@ -175,7 +94,6 @@ class Player():
         # scene.camera.position.xyz = self.pos[0]*0.01,self.pos[1]*0.01,self.pos[2]*0.01
         # scene.camera.rotation.xyz = self.rot[0],self.rot[1],0
         self.camBounds(params, scale, dy=dy*10, keys=keys)
->>>>>>> karu-gui
 
 class simwin(pl.window.Window):
     ''' akna kontrollimine ning kõik muu graafika konstrueerimine sellesse '''
@@ -188,20 +106,6 @@ class simwin(pl.window.Window):
         pl.gl.glClearColor(123/255,221/255,240/255,1) #background color
         pl.gl.glEnable(pl.gl.GL_DEPTH_TEST)
         #pl.gl.glEnable(pl.gl.GL_CULL_FACE)
-<<<<<<< HEAD
-        
-        self.keys = pl.window.key.KeyStateHandler()
-        self.mouse = pl.window.mouse.MouseStateHandler()
-        self.push_handlers(self.keys, self.mouse)
-        pl.clock.schedule(self.update)
-        self.player = Player((0.5,max(city.shape),-0.5),(-90,0))
-        self.buildings = []
-        for y in range(self.gridParams[0], self.gridParams[1], 2):
-            for x in range(self.gridParams[0]+1, self.gridParams[1], 2):
-                self.buildings.append(b.kodu(x, 0, y))
-                self.buildings.append(b.kodu(-x, 0, y))
-
-=======
         self.fov = 90
         self.scale = 10
         self.keys = pl.window.key.KeyStateHandler()
@@ -225,7 +129,6 @@ class simwin(pl.window.Window):
         #     if isinstance(inimene, p.tooline):
         #         self.objects['tool'].append(inimene)
         #     else: break
->>>>>>> karu-gui
 
     def push(self, pos, rot):
         pl.gl.glPushMatrix()
@@ -244,11 +147,7 @@ class simwin(pl.window.Window):
 
     def set3d(self):
         self.Projection()
-<<<<<<< HEAD
-        pl.gl.gluPerspective(100,self.width/self.height,0.05,1000) # FOV, aspect ratio, min render distance, max render dist
-=======
         pl.gl.gluPerspective(self.fov,self.width/self.height,0.05,1000) # FOV, aspect ratio, min render distance, max render dist
->>>>>>> karu-gui
         self.Model()
 
     def set2d(self):
@@ -267,42 +166,6 @@ class simwin(pl.window.Window):
     def on_key_press(self, KEY, MOD):
         if KEY == pl.window.key.ESCAPE: self.close()
         elif KEY == pl.window.key.SPACE: self.mouse_lock = not self.mouse_lock
-<<<<<<< HEAD
-    
-    def update(self, dt):
-        self.player.update(dt, self.keys, self.gridParams)
-        if self.mouse_lock: self.player.mouse_motion(0, 0, self.mouse, self.gridParams)
-
-    def on_draw(self):
-        window.clear()
-        self.fps.draw()
-        
-        self.set3d()
-        self.push(self.player.pos, self.player.rot)
-        for b in self.buildings:
-            b.draw()
-        pl.gl.glPopMatrix()
-        # pl.graphics.draw_indexed(4, pl.gl.GL_TRIANGLES,
-        # [1,1,1,1,1,1],
-        # ('v2i', (100, 150,
-        #         200, 250,
-        #         300, 350,
-                # 400, 450)))
-
-        # pl.gl.glBegin(pl.gl.GL_QUADS)
-        # pl.gl.glVertex2f(100., 100.)
-        # pl.gl.glVertex2f(150., 150.)
-        # pl.gl.glVertex2f(200.,100.)
-        # pl.gl.glVertex2f(150.,50.)
-        # pl.gl.glEnd()
-        # pl.shapes.Arc(self.get_size()[0]-100,self.get_size()[1]*0.8,20,segments=50).draw()
-        
-#pl.clock.schedule_interval(lambda fps_lock : fps_lock, 1/60.0)# retardus infinitus, uuendab window iga tick, ilma selleta ainult resize event puhul
-
-city = np.ones((5,5))
-window = simwin(city, resizable=True, width=1280, height=720)
-pl.app.run()
-=======
 
     def update(self, dt):
         self.player.update(dt, self.keys, self.gridParams, self.scale)
@@ -335,4 +198,3 @@ pl.app.run()
 
 # window = simwin(city, resizable=True, width=1280, height=720)
 # pl.app.run()
->>>>>>> karu-gui
