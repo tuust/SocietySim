@@ -1,5 +1,4 @@
 from pyglet import graphics
-from phys import physObject
 from pyglet.gl import *
 from pyglet import resource
 from pyglet import image
