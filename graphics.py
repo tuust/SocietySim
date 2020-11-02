@@ -117,11 +117,18 @@ class simwin(pl.window.Window):
         # linna "manuaalne" loomine
         # self.objects = {'buildings': None, 'tee': None, 'tool': []}
         # inimesed = [p.tooline() for x in range(50)]
+        i,j = -1,-1
         for y in range(self.gridParams[0], self.gridParams[1]):
+            i += 1
+            j = -1
             for x in range(self.gridParams[0]+1, self.gridParams[1]):
                 if y % 2 == 0 and x % 2 != 0:
+                    j += 1
+                    print(y,x)
                     print(x*self.scale, 0, y*self.scale)
-                    city[y,x].build(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
+                    city[x,y].build(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
+                    if i == 0 and j == 0:
+                        city[i,j].firstcoord = (x*self.scale, 0, y*self.scale)
                 else:
                     build = b.tee(x*self.scale, 0, y*self.scale, self.scale); key = 'tee'
                 if self.objects[key] == None: self.objects[key] = build

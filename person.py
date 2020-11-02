@@ -19,7 +19,7 @@ class tooline:
     def __init__(self, asukoht, size=1):
         self._asukoht = asukoht
         self.size = size
-        self.coords = (asukoht[0]*size-size*10-10,asukoht[1]*size-size*10)
+        self.coords = (-size*10+asukoht[0]*size*2,-size*10+asukoht[1]*size*2)
         self.aeg = 0
         self.x, self.y = self.coords[0], self.coords[1]
         self.vx = False; self.vy = False
@@ -84,7 +84,7 @@ class tooline:
     @asukoht.setter
     def asukoht(self, coords):
         print('setter')
-        self.coords = (coords[0]-5*10, coords[1]-5*10)
+        self.coords = (first+coords[0]*size*2,first+coords[1]*size*2)
         self._asukoht = coords
 
 class opilane:
