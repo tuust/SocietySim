@@ -97,7 +97,7 @@ class Player():
 
 class simwin(pl.window.Window):
     ''' akna kontrollimine ning kõik muu graafika konstrueerimine sellesse '''
-    def __init__(self, city, *args, **kwargs):
+    def __init__(self, city, inimesed, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_minimum_size(500, 300)
         self.fps = pl.window.FPSDisplay(self)
@@ -113,17 +113,18 @@ class simwin(pl.window.Window):
         self.push_handlers(self.keys, self.mouse)
         pl.clock.schedule_interval(self.update, 1/120)
         self.player = Player((0.5*self.scale,max(city.shape)*self.scale,-0.5*self.scale),(-90,0))
-        
+        self.objects = {'buildings': city[0,0], 'tee': None, 'tool': inimesed}
         # linna "manuaalne" loomine
         # self.objects = {'buildings': None, 'tee': None, 'tool': []}
         # inimesed = [p.tooline() for x in range(50)]
-        # for y in range(self.gridParams[0], self.gridParams[1]):
-        #     for x in range(self.gridParams[0]+1, self.gridParams[1]):
-        #         if y % 2 == 0 and x % 2 != 0:
-        #             build = b.kodu(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
-        #         else:
-        #             build = b.tee(x*self.scale, 0, y*self.scale, self.scale); key = 'tee'
-        #         if self.objects[key] == None: self.objects[key] = build
+        for y in range(self.gridParams[0], self.gridParams[1]):
+            for x in range(self.gridParams[0]+1, self.gridParams[1]):
+                if y % 2 == 0 and x % 2 != 0:
+                    print(x*self.scale, 0, y*self.scale)
+                    city[y,x].build(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
+                else:
+                    build = b.tee(x*self.scale, 0, y*self.scale, self.scale); key = 'tee'
+                if self.objects[key] == None: self.objects[key] = build
         # for inimene in inimesed:
         #     # if None in self.objects.values():
         #     if isinstance(inimene, p.tooline):

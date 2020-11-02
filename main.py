@@ -1,10 +1,12 @@
 import building as b
 import person as p
 import numpy as np
-import math
+import math, pyglet
 from random import randint
 from itertools import cycle
 from pyglet import clock
+import graphics
+from time import sleep
 
 maju = 100
 majad = np.array([])
@@ -47,13 +49,14 @@ for rida in range(len(majad)):
             for inim in range(inimarv):
                 
                 # inimese loomine
-                inim = p.tooline()
+                inim = p.tooline([rida, maja], math.sqrt(maju))
                 inim.staatus = 0    #Terved(0), Haiged(1), Tervenenud(2)
                 inim.kodu = [rida, maja] #Inimese kodu kordinaadid
                 i = math.sqrt(maju)
                 inim.too = [randint(0,pikkus),randint(0,pikkus)]
                 inim.pood = [randint(0,pikkus),randint(0,pikkus)]
-                inim.asukoht = [rida, maja] #Kus inimene asub
+                inim._asukoht = [rida, maja]
+                inim.kohad = cycle(iter(['too', 'pood', 'kodu']))
                 inimesed.append(inim)
 
 # Algsete haigete määramine
@@ -67,18 +70,24 @@ def inithaige():
 for i in range(haige):
     inithaige()
 
-kohad = cycle(iter(['too', 'pood', 'kodu']))
+# gui laadimine
+window = graphics.simwin(majad, inimesed, resizable=True, width=1280, height=720)
+pyglet.app.run()
+
 while True:
     haiged = []
-    koht = next(kohad)
     for inim in inimesed:
-        inim.asukoht = getattr(inim, koht) 
+        if inim.aeg == 100:
+            inim.koht = next(inim.kohad)
+            inim.aeg = 0
+            inim._asukoht = getattr(inim, koht) 
         if inim.staatus == 1:
-            haiged.append(inim.asukoht)
+            haiged.append(inim._asukoht)
         
     for inim in inimesed:
         if randint(0,100) <= 10: #tervenemise protsent
             inim.staatus = 2
-        if inim.asukoht in haiged:
+        if inim.coords in haiged:
             if randint(0,100) <= 40 and inim.staatus != 2: #haigestumise protsent
                 inim.staatus = 1
+    sleep(1)

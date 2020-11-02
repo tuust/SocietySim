@@ -30,7 +30,7 @@ class kodu:
     #     glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST)
     #     self.tex_coords = tex.tex_coords
     #     return graphics.TextureGroup(tex)
-    def __init__(self, x, y, z, size=1):
+    def build(self, x, y, z, size=1):
         X,Y,Z = x+size,y+size,z+size
         #tex_coords = ('t2f', (0,0, 0.796875,0, 0.796875,0.796875, 0,0.796875))
         #tex = self.load_tex('res/kodu/wall1.jpg')

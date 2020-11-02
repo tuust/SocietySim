@@ -1,4 +1,4 @@
-from pyglet import graphics, image
+from pyglet import graphics, image, clock
 from pyglet.shapes import Rectangle
 from pyglet.gl import *
 import math
@@ -16,8 +16,12 @@ class tooline:
         glGenerateMipmap(GL_TEXTURE_2D)
         textures.append((graphics.TextureGroup(tex), tex.tex_coords))
     batch = graphics.Batch()
-    def __init__(self, size=1):
-        self.x, self.y = self.asukoht[0], self.asukoht[1]
+    def __init__(self, asukoht, size=1):
+        self._asukoht = asukoht
+        self.size = size
+        self.coords = (asukoht[0]*size-size*10-10,asukoht[1]*size-size*10)
+        self.aeg = 0
+        self.x, self.y = self.coords[0], self.coords[1]
         self.vx = False; self.vy = False
 
         # Kera objekti tegemine
@@ -48,36 +52,40 @@ class tooline:
             # glEnd()
     
     def draw(self, scale):
-        
         # Liikumise arvutamine
-        # if round(self.x) != self.asukoht[0] or round(self.y) != self.asukoht[1]:
-        #     if self.vx:
-        #         if self.x < self.asukoht[0]: self.x += 0.1
-        #         else: self.x -= 0.1
-        #         self.count += 1
-        #         if self.count == 10*scale: self.vx = False
-        #     elif self.vy:
-        #         if self.y < self.asukoht[1]: self.y += 0.1
-        #         else: self.y -= 0.1
-        #         self.count += 1
-        #         if self.count == 10*scale: self.vy = False
-        #     elif max(self.asukoht[0]-self.x, self.x-self.asukoht[0]) >= max(self.asukoht[1]-self.y, self.y-self.asukoht[1]): self.vx = True; self.count = 0
-        #     else: self.vy = True; self.count = 0
-        
+        if round(self.x) != self.coords[0] or round(self.y) != self.coords[1]:
+            if self.vx:
+                if self.x < self.coords[0]: self.x += 0.1
+                else: self.x -= 0.1
+                self.count += 1
+                if self.count == 10*scale: self.vx = False
+            elif self.vy:
+                if self.y < self.coords[1]: self.y += 0.1
+                else: self.y -= 0.1
+                self.count += 1
+                if self.count == 10*scale: self.vy = False
+            elif max(self.coords[0]-self.x, self.x-self.coords[0]) >= max(self.coords[1]-self.y, self.y-self.coords[1]): self.vx = True; self.count = 0
+            else: self.vy = True; self.count = 0
+        else: self.aeg += 1
+
         # Liikumine määratud asukohta
         glPushMatrix()
-        # glColor3ub(244, 93, 66)
+        if self.staatus == 0: glColor3ub(244, 93, 66)
+        elif self.staatus == 1: glColor3ub(244, 93, 66)
+        else: glColor3ub(244, 93, 66)
         glTranslatef(self.x, 0.2*scale, self.y)
         self.batch.draw()
         glPopMatrix()
 
     @property
     def asukoht(self):
-        return self.asukoht
+        return self._asukoht
     
     @asukoht.setter
     def asukoht(self, coords):
-        self.coords = (self.asukoht[0]-5, self.asukoht[1]+5)
+        print('setter')
+        self.coords = (coords[0]-5*10, coords[1]-5*10)
+        self._asukoht = coords
 
 class opilane:
     def __init__(self):
