@@ -124,8 +124,6 @@ class simwin(pl.window.Window):
             for x in range(self.gridParams[0]+1, self.gridParams[1]):
                 if y % 2 == 0 and x % 2 != 0:
                     j += 1
-                    print(y,x)
-                    print(x*self.scale, 0, y*self.scale)
                     city[x,y].build(x*self.scale, 0, y*self.scale, self.scale); key = 'buildings'
                     if i == 0 and j == 0:
                         city[i,j].firstcoord = (x*self.scale, 0, y*self.scale)
@@ -186,7 +184,7 @@ class simwin(pl.window.Window):
         #     b.draw()
         # "joonistab" OpenGL iga kuubiku eraldi ning juba 100x100 ruudustikus on umbes 0.5 fps'i, pannes aga kõik kuubikud ühe batch'i sisse ehk
         # self.buildings.draw() on samas 100x100 ruudustikus fps umbes 800  #VoteForBatchedRendering,
-        # ilmselt tuleneb see sellest, et batched rendering oskab kasutada gpu'd paremini 
+        # ilmselt tuleneb see sellest, et batched rendering oskab kasutada gpu'd
         # --- fun fact acquiered ---
 
         self.clear()

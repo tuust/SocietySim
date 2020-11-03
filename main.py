@@ -37,27 +37,27 @@ haige = 3
 terved = inimesi - haige
 
 inimesed = []
-pikkus = math.sqrt(maju)
-for rida in range(len(majad)):
-    for maja in range(len(majad[rida])):
-        if isinstance(majad[rida, maja], b.kodu):
-            range(len(majad))
-            if len(inimesed) < kodu-5:
-                inimarv = randint(2,5)#Mitu inimest elab ühes kodus
-            else:
-                inimarv = kodu - len(inimesed)
-            for inim in range(inimarv):
-                
-                # inimese loomine
-                inim = p.tooline([rida, maja], math.sqrt(maju))
-                inim.staatus = 0    #Terved(0), Haiged(1), Tervenenud(2)
-                inim.kodu = [rida, maja] #Inimese kodu kordinaadid
-                i = math.sqrt(maju)
-                inim.too = [randint(0,pikkus),randint(0,pikkus)]
-                inim.pood = [randint(0,pikkus),randint(0,pikkus)]
-                inim._asukoht = [rida, maja]
-                inim.kohad = cycle(iter(['too', 'pood', 'kodu']))
-                inimesed.append(inim)
+pikkus = math.sqrt(maju)-1
+# for rida in range(len(majad)):
+#     for maja in range(len(majad[rida])):
+#         if isinstance(majad[rida, maja], b.kodu):
+#             range(len(majad))
+#             if len(inimesed) < kodu-5:
+#                 inimarv = randint(2,5)#Mitu inimest elab ühes kodus
+#             else:
+#                 inimarv = kodu - len(inimesed)
+#             for inim in range(inimarv):
+for inim in range(inimesi):       
+    # inimese loomine
+    rida, maja = randint(0,pikkus), randint(0,pikkus)
+    inim = p.tooline([rida, maja], math.sqrt(maju))
+    inim.staatus = 0    #Terved(0), Haiged(1), Tervenenud(2)
+    inim.kodu = [rida, maja] #Inimese kodu kordinaadid
+    i = math.sqrt(maju)
+    inim.too = [randint(0,pikkus),randint(0,pikkus)]
+    inim.pood = [randint(0,pikkus),randint(0,pikkus)]
+    inim.kohad = cycle(iter(['too', 'pood', 'kodu']))
+    inimesed.append(inim)
 
 # Algsete haigete määramine
 koords = []
@@ -70,24 +70,29 @@ def inithaige():
 for i in range(haige):
     inithaige()
 
-# gui laadimine
-window = graphics.simwin(majad, inimesed, resizable=True, width=1280, height=720)
-pyglet.app.run()
-
-while True:
+# sim'i mainloop
+def elu(dt):
     haiged = []
     for inim in inimesed:
-        if inim.aeg == 100:
-            inim.koht = next(inim.kohad)
+        print(inim.aeg)
+        if inim.aeg == 10:
+            koht = next(inim.kohad)
             inim.aeg = 0
-            inim._asukoht = getattr(inim, koht) 
-        if inim.staatus == 1:
-            haiged.append(inim._asukoht)
+            inim.asukoht = getattr(inim, koht) 
+        elif not inim.vx and not inim.vy:
+            inim.aeg += 1
+            if inim.staatus == 1:
+                haiged.append(inim.asukoht)
         
     for inim in inimesed:
-        if randint(0,100) <= 10: #tervenemise protsent
-            inim.staatus = 2
-        if inim.coords in haiged:
-            if randint(0,100) <= 40 and inim.staatus != 2: #haigestumise protsent
+        if inim.staatus == 1:
+            if randint(0,100) <= 10: #tervenemise protsent
+                inim.staatus = 2
+        if inim.staatus == 0 and inim.asukoht in haiged:
+            if randint(0,100) <= 40: #haigestumise protsent
                 inim.staatus = 1
-    sleep(1)
+
+# gui laadimine
+window = graphics.simwin(majad, inimesed, resizable=True, width=1280, height=720)
+pyglet.clock.schedule_interval(elu, 0.5)
+pyglet.app.run()

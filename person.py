@@ -17,10 +17,10 @@ class tooline:
         textures.append((graphics.TextureGroup(tex), tex.tex_coords))
     batch = graphics.Batch()
     def __init__(self, asukoht, size=1):
-        self._asukoht = asukoht
         self.size = size
-        self.coords = (-size*10+asukoht[0]*size*2,-size*10+asukoht[1]*size*2)
-        self.aeg = 0
+        self.asukoht = asukoht
+        self.coords = (-size*10+asukoht[0]*size*2+size*1.5,-size*10+asukoht[1]*size*2+size/2)
+        self.aeg = 10
         self.x, self.y = self.coords[0], self.coords[1]
         self.vx = False; self.vy = False
 
@@ -66,13 +66,13 @@ class tooline:
                 if self.count == 10*scale: self.vy = False
             elif max(self.coords[0]-self.x, self.x-self.coords[0]) >= max(self.coords[1]-self.y, self.y-self.coords[1]): self.vx = True; self.count = 0
             else: self.vy = True; self.count = 0
-        else: self.aeg += 1
+        else: self.vx = False; self.vy = False
 
         # Liikumine määratud asukohta
         glPushMatrix()
-        if self.staatus == 0: glColor3ub(244, 93, 66)
-        elif self.staatus == 1: glColor3ub(244, 93, 66)
-        else: glColor3ub(244, 93, 66)
+        if self.staatus == 0: glColor3ub(102, 255, 102)
+        elif self.staatus == 1: glColor3ub(255, 102, 102)
+        else: glColor3ub(102, 255, 255)
         glTranslatef(self.x, 0.2*scale, self.y)
         self.batch.draw()
         glPopMatrix()
@@ -83,8 +83,8 @@ class tooline:
     
     @asukoht.setter
     def asukoht(self, coords):
-        print('setter')
-        self.coords = (first+coords[0]*size*2,first+coords[1]*size*2)
+        print(coords)
+        self.coords = (-self.size*10+coords[0]*self.size*2+self.size*1.5,-self.size*10+coords[1]*self.size*2+self.size/2)
         self._asukoht = coords
 
 class opilane:
