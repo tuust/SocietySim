@@ -3,7 +3,6 @@ import person as p
 import numpy as np
 import math, pyglet
 from random import randint
-from itertools import cycle
 from pyglet import clock
 import graphics
 from time import sleep
@@ -36,8 +35,9 @@ inimesi = kodu*3 #populatsiooni arvutamine
 haige = 3
 terved = inimesi - haige
 
-inimesed = []
-pikkus = math.sqrt(maju)-1
+# gui aken
+window = graphics.simwin(majad, inimesi, resizable=True, width=1280, height=720)
+
 # for rida in range(len(majad)):
 #     for maja in range(len(majad[rida])):
 #         if isinstance(majad[rida, maja], b.kodu):
@@ -47,33 +47,25 @@ pikkus = math.sqrt(maju)-1
 #             else:
 #                 inimarv = kodu - len(inimesed)
 #             for inim in range(inimarv):
-for inim in range(inimesi):       
-    # inimese loomine
-    rida, maja = randint(0,pikkus), randint(0,pikkus)
-    inim = p.tooline([rida, maja], math.sqrt(maju))
-    inim.staatus = 0    #Terved(0), Haiged(1), Tervenenud(2)
-    inim.kodu = [rida, maja] #Inimese kodu kordinaadid
-    i = math.sqrt(maju)
-    inim.too = [randint(0,pikkus),randint(0,pikkus)]
-    inim.pood = [randint(0,pikkus),randint(0,pikkus)]
-    inim.kohad = cycle(iter(['too', 'pood', 'kodu']))
-    inimesed.append(inim)
 
 # Algsete haigete määramine
+pikkus = math.sqrt(maju)-1
 koords = []
 def inithaige():
     x = randint(0,pikkus)
     if x not in koords:
         koords.append(x)
-        inimesed[x].staatus = 1
+        window.inimesed[x].staatus = 1
+        window.haiged += 1
     else: inithaige()
 for i in range(haige):
     inithaige()
+window.terved = inimesi - window.haiged
 
 # sim'i mainloop
 def elu(dt):
     haiged = []
-    for inim in inimesed:
+    for inim in window.inimesed:
         print(inim.aeg)
         if inim.aeg == 10:
             koht = next(inim.kohad)
@@ -84,15 +76,16 @@ def elu(dt):
             if inim.staatus == 1:
                 haiged.append(inim.asukoht)
         
-    for inim in inimesed:
-        if inim.staatus == 1:
-            if randint(0,100) <= 10: #tervenemise protsent
+    for inim in window.inimesed:
+        if inim.staatus == 1 and not inim.vx and not inim.vy:
+            if randint(0,1000) <= 10: #tervenemise protsent
                 inim.staatus = 2
-        if inim.staatus == 0 and inim.asukoht in haiged:
-            if randint(0,100) <= 40: #haigestumise protsent
+                window.tervenenud += 1; window.haiged -= 1
+        elif inim.staatus == 0 and inim.asukoht in haiged:
+            if randint(0,1000) <= 40: #haigestumise protsent
                 inim.staatus = 1
+                window.haiged += 1; window.terved -= 1
 
 # gui laadimine
-window = graphics.simwin(majad, inimesed, resizable=True, width=1280, height=720)
 pyglet.clock.schedule_interval(elu, 0.5)
 pyglet.app.run()

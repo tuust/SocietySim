@@ -55,13 +55,13 @@ class tooline:
         # Liikumise arvutamine
         if round(self.x) != self.coords[0] or round(self.y) != self.coords[1]:
             if self.vx:
-                if self.x < self.coords[0]: self.x += 0.1
-                else: self.x -= 0.1
+                if self.x < self.coords[0]: self.x += 0.3
+                else: self.x -= 0.3
                 self.count += 1
                 if self.count == 10*scale: self.vx = False
             elif self.vy:
-                if self.y < self.coords[1]: self.y += 0.1
-                else: self.y -= 0.1
+                if self.y < self.coords[1]: self.y += 0.3
+                else: self.y -= 0.3
                 self.count += 1
                 if self.count == 10*scale: self.vy = False
             elif max(self.coords[0]-self.x, self.x-self.coords[0]) >= max(self.coords[1]-self.y, self.y-self.coords[1]): self.vx = True; self.count = 0
@@ -83,7 +83,7 @@ class tooline:
     
     @asukoht.setter
     def asukoht(self, coords):
-        print(coords)
+        # print(coords)
         self.coords = (-self.size*10+coords[0]*self.size*2+self.size*1.5,-self.size*10+coords[1]*self.size*2+self.size/2)
         self._asukoht = coords
 

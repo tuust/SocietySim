@@ -3,6 +3,8 @@ import person as p
 import building as b
 import math
 import numpy as np
+from random import randint
+from itertools import cycle
 # import ratcave as rc  # shaderitega blenderi objektid
 
 class Player():
@@ -97,7 +99,7 @@ class Player():
 
 class simwin(pl.window.Window):
     ''' akna kontrollimine ning kõik muu graafika konstrueerimine sellesse '''
-    def __init__(self, city, inimesed, *args, **kwargs):
+    def __init__(self, city, inimesi, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_minimum_size(500, 300)
         self.fps = pl.window.FPSDisplay(self)
@@ -113,7 +115,22 @@ class simwin(pl.window.Window):
         self.push_handlers(self.keys, self.mouse)
         pl.clock.schedule_interval(self.update, 1/120)
         self.player = Player((0.5*self.scale,max(city.shape)*self.scale,-0.5*self.scale),(-90,0))
-        self.objects = {'buildings': city[0,0], 'tee': None, 'tool': inimesed}
+        self.inimesed = []; pikkus = city.shape[0]-1
+        for inim in range(inimesi):       
+            # inimese loomine
+            rida, maja = randint(0,pikkus), randint(0,pikkus)
+            inim = p.tooline([rida, maja], pikkus+1)
+            inim.staatus = 0    #Terved(0), Haiged(1), Tervenenud(2)
+            inim.kodu = [rida, maja] #Inimese kodu kordinaadid
+            inim.too = [randint(0,pikkus),randint(0,pikkus)]
+            inim.pood = [randint(0,pikkus),randint(0,pikkus)]
+            inim.kohad = cycle(iter(['too', 'pood', 'kodu']))
+            self.inimesed.append(inim)
+        self.haigel = pl.text.Label('',font_name='FreeMono',font_size=23, bold=True,color=(60,60,60, 400),x=10, y=105)
+        self.tervel = pl.text.Label('',font_name='FreeMono',font_size=23, bold=True,color=(60,60,60, 400),x=10, y=75)
+        self.tervenl = pl.text.Label('',font_name='FreeMono',font_size=23, bold=True,color=(60,60,60, 400),x=10, y=45)
+        self.haiged = 0; self.terved = 0; self.tervenenud = 0
+        self.objects = {'buildings': city[0,0], 'tee': None, 'tool': self.inimesed}
         # linna "manuaalne" loomine
         # self.objects = {'buildings': None, 'tee': None, 'tool': []}
         # inimesed = [p.tooline() for x in range(50)]
@@ -135,6 +152,27 @@ class simwin(pl.window.Window):
         #     if isinstance(inimene, p.tooline):
         #         self.objects['tool'].append(inimene)
         #     else: break
+    @property
+    def haiged(self):
+        return self._haiged
+    @haiged.setter
+    def haiged(self, i):
+        self.haigel.text = f'Haigeid: {i}'
+        self._haiged = i
+    @property
+    def terved(self):
+        return self._terved
+    @terved.setter
+    def terved(self, i):
+        self.tervel.text = f'Terveid: {i}'
+        self._terved = i
+    @property
+    def tervenenud(self):
+        return self._terven
+    @tervenenud.setter
+    def tervenenud(self, i):
+        self.tervenl.text = f'Tervenenuid: {i}'
+        self._terven = i
 
     def push(self, pos, rot):
         pl.gl.glPushMatrix()
@@ -196,7 +234,8 @@ class simwin(pl.window.Window):
                     obj.draw(self.scale)
             else: self.objects[key].draw()
         pl.gl.glPopMatrix()
-        
+        self.set2d()
+        self.haigel.draw(); self.tervel.draw(); self.tervenl.draw()
         self.fps.draw()
 
 # manuaalne käivitamine
