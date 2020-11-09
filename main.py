@@ -7,7 +7,7 @@ from pyglet import clock
 import graphics
 from time import sleep
 
-maju = 25
+maju = 100
 majad = np.array([])
 
 # koole = int(maju * 0.02)
