@@ -7,7 +7,7 @@ from pyglet import clock
 import graphics
 from time import sleep
 
-maju = 100
+maju = 25
 majad = np.array([])
 
 # koole = int(maju * 0.02)
@@ -78,7 +78,7 @@ def elu(dt):
         
     for inim in window.inimesed:
         if inim.staatus == 1 and not inim.vx and not inim.vy:
-            if randint(0,1000) <= 10: #tervenemise protsent
+            if randint(0,1000) <= 20: #tervenemise protsent
                 inim.staatus = 2
                 window.tervenenud += 1; window.haiged -= 1
         elif inim.staatus == 0 and inim.asukoht in haiged:

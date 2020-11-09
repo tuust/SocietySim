@@ -40,7 +40,7 @@ class kodu:
         self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3i',(x,y,Z, X,y,Z, X,Y,Z, x,Y,Z)), color, ('t3f',self.textures[0][1])) #front
         self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3i',(x,y,z, x,y,Z, x,Y,Z, x,Y,z)), color, ('t3f',self.textures[0][1])) #left
         self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3i',(X,y,Z, X,y,z, X,Y,z, X,Y,Z)), color, ('t3f',self.textures[0][1])) #right
-        self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3i',(x,y,z, X,y,z, X,y,Z, x,y,Z)), color, ('t3f',self.textures[0][1])) # bottom
+        self.batch.add(4, GL_QUADS, self.textures[1][0], ('v3i',(x,y,z, X,y,z, X,y,Z, x,y,Z)), color, ('t3f',self.textures[1][1])) # bottom
         # self.batch.add(4, GL_QUADS, self.textures[0][0], ('v3i',(X,Y,Z, X,Y,z, x,Y,z, x,Y,Z)), color, ('t3f',self.textures[0][1])) #top
     def draw(self):
         self.batch.draw()
